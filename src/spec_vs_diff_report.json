@@ -1,0 +1,109 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-13T07:22:22.282Z",
+  "summary": "The diff adds a Motoko backend actor with job source CRUD guarded by an admin check, plus a React UI with Mogambo branding, search page, admin route/guard, job source management UI, and AdSense-ready ad slot components/settings. However, several core requirements are either not evidenced (due to truncation) or appear unimplemented, and some non-goal features (user profiles) were added.",
+  "missing_requirements": [
+    {
+      "id": "REQ-2",
+      "requirement": "Implement job search and discovery by aggregating listings from multiple configurable sources, including partial per-source failure handling surfaced as a non-blocking UI indicator.",
+      "reason": "The frontend calls `useSearchJobs(...)` and renders a list, but the diff does not show the hook implementation (truncated) nor any backend search/aggregation implementation. The JobResultsList only supports a single `error` object (global failure) and does not show per-source non-blocking error indicators while still rendering results.",
+      "evidence": [
+        "frontend/src/pages/SearchPage.tsx (truncated, calls useSearchJobs)",
+        "frontend/src/components/JobResultsList.tsx (single error path; no per-source errors)"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Backend must fetch jobs from enabled sources (JSON/RSS) via HTTPS outcalls where possible, and expose methods to search across enabled sources returning aggregated results with per-source errors.",
+      "reason": "backend/main.mo shows source storage and CRUD methods, but the diff is truncated before any job fetching/search logic is evidenced. No HTTPS outcall logic or aggregated search response with per-source errors is visible in the provided excerpt.",
+      "evidence": [
+        "backend/main.mo (truncated; shows JobSource types + CRUD, but no visible fetch/search implementation)"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "requirement": "Admin Panel must allow changing basic app settings relevant to aggregation and ads (at minimum ads enable toggle and AdSense publisher/client id) as admin-only, persisted in canister state.",
+      "reason": "The Admin UI includes an Ad Settings tab, but the settings are stored in localStorage via `useAdSettings` with no evidence of backend persistence or admin-only backend methods for settings.",
+      "evidence": [
+        "frontend/src/components/AdSettingsPanel.tsx",
+        "frontend/src/hooks/useAdSettings.ts (localStorage persistence)"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "Backend must provide a mechanism to manage the admin allowlist (bootstrap + admin-only add/remove admins).",
+      "reason": "Frontend initializes access control using a URL secret parameter (`caffeineAdminToken`) and calls `_initializeAccessControlWithSecret(...)`, but the diff does not show explicit admin allowlist management methods (add/remove admin principals) as required. The backend is truncated and does not evidence such methods.",
+      "evidence": [
+        "frontend/src/hooks/useActor.ts (calls actor._initializeAccessControlWithSecret(adminToken))",
+        "backend/main.mo (truncated; AccessControl/MixinAuthorization included but admin allowlist management not shown)"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "Ad slots should render only when enabled; otherwise they do not occupy space; include at least two distinct ad slots (e.g., top banner and in-results) with graceful failure behavior.",
+      "reason": "AdSlot supports two slot types ('top-banner' and 'in-results') and hides when disabled, but only the top-banner usage is visible in the provided truncated SearchPage; no evidence is shown that an in-results placement is actually rendered in the results list/page.",
+      "evidence": [
+        "frontend/src/components/ads/AdSlot.tsx (defines both slots)",
+        "frontend/src/pages/SearchPage.tsx (truncated; shows top-banner usage)"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "User profile feature (profile setup dialog, profile storage and queries) which is explicitly called out as an advanced feature not requested (user profiles).",
+      "reason": "BuildRequest non-goals include “Advanced features not requested (user profiles...)”, but the diff adds UserProfile types/storage and UI flows to collect and display a profile name.",
+      "evidence": [
+        "backend/main.mo (defines UserProfile, userProfiles map, get/save profile methods)",
+        "frontend/src/components/ProfileSetupDialog.tsx",
+        "frontend/src/App.tsx (renders ProfileSetupDialog)",
+        "frontend/src/components/BrandHeader.tsx (shows welcome message using userProfile)",
+        "frontend/src/hooks/useQueries.ts (user profile queries/mutations)"
+      ]
+    },
+    {
+      "description": "Secret URL parameter-based admin initialization token (`caffeineAdminToken`) and automatic call to `_initializeAccessControlWithSecret(...)` on actor creation.",
+      "reason": "The BuildRequest requires Internet Identity auth and an admin allowlist in backend, but does not request a URL secret parameter bootstrap mechanism tied to 'caffeine' naming; this appears to be extra/unrequested behavior.",
+      "evidence": [
+        "frontend/src/hooks/useActor.ts (getSecretParameter('caffeineAdminToken'); actor._initializeAccessControlWithSecret(adminToken))"
+      ]
+    },
+    {
+      "description": "Footer credit/attribution link to caffeine.ai with UTM parameters.",
+      "reason": "Not requested in the BuildRequest requirements; added branding/attribution is extra.",
+      "evidence": [
+        "frontend/src/App.tsx (footer includes caffeine.ai link)"
+      ]
+    }
+  ],
+  "confidence": 0.68,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/AccessDeniedScreen.tsx",
+    "frontend/src/components/AdSettingsPanel.tsx",
+    "frontend/src/components/AdminGuard.tsx",
+    "frontend/src/components/BrandHeader.tsx",
+    "frontend/src/components/JobResultsList.tsx",
+    "frontend/src/components/JobSourceEditorDialog.tsx",
+    "frontend/src/components/JobSourcesManager.tsx",
+    "frontend/src/components/LoginButton.tsx",
+    "frontend/src/components/ProfileSetupDialog.tsx",
+    "frontend/src/components/ads/AdSlot.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useAdSettings.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
+    "frontend/src/main.tsx",
+    "frontend/src/pages/AdminPage.tsx",
+    "frontend/src/pages/SearchPage.tsx",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}

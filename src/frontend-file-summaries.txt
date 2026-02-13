@@ -1,0 +1,20 @@
+{
+  "frontend/src/App.tsx": "Main application component with TanStack Router setup, theme provider, layout with header/footer, and profile setup dialog integration.",
+  "frontend/src/components/BrandHeader.tsx": "Sticky header component displaying Mogambo logo, navigation, user profile name, admin panel link (for admins), and login/logout button.",
+  "frontend/src/components/LoginButton.tsx": "Authentication button component using Internet Identity with loading states and query cache clearing on logout.",
+  "frontend/src/components/ProfileSetupDialog.tsx": "Modal dialog for first-time user profile setup, prompting for display name after initial login.",
+  "frontend/src/components/AccessDeniedScreen.tsx": "Full-screen access denied message for unauthorized users attempting to access admin-only areas.",
+  "frontend/src/components/AdminGuard.tsx": "Authorization wrapper component that checks admin status and blocks non-admin users from accessing protected routes.",
+  "frontend/src/pages/SearchPage.tsx": "Main job search page with hero section, search form (keyword + location), results list, and two ad slot placements, now with corrected Filter type handling.",
+  "frontend/src/components/JobResultsList.tsx": "Job results display component showing normalized job cards with title, company, location, source badge, date, and apply link.",
+  "frontend/src/pages/AdminPage.tsx": "Admin panel with tabbed interface for managing job sources and ad settings, protected by AdminGuard.",
+  "frontend/src/components/JobSourcesManager.tsx": "Table-based job sources management UI with enable/disable toggles, edit, and delete actions with confirmation dialog.",
+  "frontend/src/components/JobSourceEditorDialog.tsx": "Modal form for adding new or editing existing job sources with name, URL, and fetch type fields.",
+  "frontend/src/components/AdSettingsPanel.tsx": "Admin settings panel for configuring AdSense integration (enable toggle and publisher ID input).",
+  "frontend/src/components/ads/AdSlot.tsx": "Reusable ad slot component that conditionally renders ad placeholders based on admin settings.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations including user profiles, admin checks, job sources CRUD, and job search.",
+  "frontend/src/hooks/useAdSettings.ts": "Custom hook for managing ad settings in localStorage with enable toggle and publisher ID persistence.",
+  "frontend/src/index.css": "Global styles with warm amber/orange OKLCH color palette (avoiding blue/purple) for both light and dark modes.",
+  "frontend/index.html": "HTML entry point with Mogambo title, favicon link, and meta description.",
+  "frontend/tailwind.config.js": "Tailwind configuration with extended theme including Inter font family and custom shadow utilities."
+}

@@ -1,0 +1,183 @@
+{
+  "kind": "build_request",
+  "title": "Mogambo — Job Finder Aggregator with Admin Panel and AdSense-Ready Layout",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Set the application name to “Mogambo” across the UI (header/title text) and any app metadata that is user-visible.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "name the app\" Mogambo\""
+        ]
+      },
+      "acceptanceCriteria": [
+        "The app’s main header/brand area displays “Mogambo”.",
+        "User-facing page titles/labels use “Mogambo” where appropriate."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Implement job search and discovery by aggregating listings from multiple configurable job portal sources: provide a unified search UI (keyword + location + optional filters) and a results list that normalizes common fields (title, company, location, source, date, apply URL).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "Create an app for finding jobs using differents job portals available on internet"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Users can enter a keyword and location and see a combined results list from all enabled sources.",
+        "Each result shows: job title, company (or “Unknown” if not provided), location (or “Remote/Unknown”), source name, posted date (or “Unknown”), and an “Apply” link that opens the original posting URL.",
+        "Results clearly indicate which source they came from.",
+        "If a source fails to fetch, the UI still renders results from other sources and shows a non-blocking error indicator."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Add backend support for managing job portal sources, including: storing a list of sources (name, base URL, fetch type such as JSON/RSS, enabled flag), fetching jobs from enabled sources via HTTPS outcalls where possible, and exposing query methods for the frontend to search across fetched results.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "using differents job portals available on internet"
+        ]
+      },
+      "acceptanceCriteria": [
+        "An admin-configurable list of sources exists in backend state with fields: id, name, endpoint/base URL, enabled, and a simple type discriminator (e.g., RSS vs JSON).",
+        "Backend exposes methods to list sources and search jobs across enabled sources.",
+        "Backend handles partial failures per source and returns an aggregated response that includes per-source errors (non-fatal)."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Create an Admin Panel that is accessible only to authenticated admin users and allows managing job sources (create/update/enable/disable/delete) and basic app settings relevant to aggregation and ads.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "also add admin panel"
+        ]
+      },
+      "acceptanceCriteria": [
+        "There is a dedicated Admin Panel route/screen accessible from the UI.",
+        "Non-admin users cannot access the Admin Panel (they are blocked and shown an appropriate message).",
+        "Admin users can add, edit, enable/disable, and delete job sources.",
+        "Admin users can change basic settings (at minimum: a toggle to enable/disable rendering ad slots and a text field for AdSense publisher/client id if needed for UI injection)."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Implement authentication using Internet Identity and backend authorization for admin-only operations (admin list stored in backend; only admins can mutate sources/settings).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "add admin panel"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Users can sign in and sign out via Internet Identity.",
+        "Backend checks caller identity for admin-only methods and rejects non-admin callers.",
+        "There is a backend mechanism to manage the admin allowlist (e.g., initial admin bootstrap and an admin-only method to add/remove other admins)."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Make the frontend AdSense-ready by adding clearly defined ad slots (e.g., header/banner and sidebar/in-feed placements) that can be toggled on/off via admin settings, and ensure the integration is implemented as a safe, optional script/embed with graceful fallback when ads are disabled or blocked.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "Adsense ready"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The UI includes at least two distinct ad slot components/containers (e.g., top banner and in-results slot).",
+        "Ad slots render only when enabled in settings; otherwise they do not occupy space or show placeholders.",
+        "If ad loading fails (blocked/no client id), the app remains fully usable with no crashes."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Create a coherent, distinctive visual theme for Mogambo (colors, typography, layout, spacing) and apply it consistently across landing/search/results and the Admin Panel (avoid blue/purple as primary colors).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "Create an app for finding jobs"
+        ]
+      },
+      "acceptanceCriteria": [
+        "App uses a consistent theme (color palette, type scale, and component styling) across all pages.",
+        "Primary colors are not blue/purple.",
+        "Search/results and admin screens feel visually part of the same product."
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Add static generated brand assets and wire them into the UI: include a logo and favicon for Mogambo, and use them in the header and browser tab.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "name the app\" Mogambo\""
+        ]
+      },
+      "acceptanceCriteria": [
+        "A Mogambo logo image is present in the repo under frontend/public/assets/generated and is displayed in the app header.",
+        "A Mogambo favicon is present under frontend/public/assets/generated and is used by the app.",
+        "Assets are served as static files (not via backend)."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single Motoko actor (all logic in backend/main.mo).",
+    "Do not edit frontend immutable paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, and anything under frontend/src/components/ui; compose/wrap these instead.",
+    "Authentication must use Internet Identity only (no third-party auth providers).",
+    "No external databases or cloud services; all persistence must be in canister state.",
+    "Avoid scraping job portals in ways that require a headless browser or violate portal terms; prefer public RSS/JSON endpoints or user-configured API endpoints where available."
+  ],
+  "nonGoals": [
+    "Guaranteeing coverage of all job portals on the internet or perfect data normalization across every source.",
+    "Guaranteeing Google AdSense approval or ad fill; only provide an AdSense-ready integration layout and configuration.",
+    "Real-time job updates via websockets/push notifications.",
+    "Advanced features not requested (user profiles, resumes/CV builder, messaging/chat, email notifications)."
+  ],
+  "imageRequirements": {
+    "required": [
+      "Minimalist wordmark logo reading “Mogambo” with a bold, modern look (mogambo-logo.dim_512x192.png)",
+      "Simple icon-style favicon mark for “Mogambo” (mogambo-favicon.dim_128x128.png)",
+      "Wide, subtle background/hero illustration with abstract shapes and warm tones (mogambo-hero-bg.dim_1600x900.png)"
+    ],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Mogambo — Job Finder Aggregator (Frontend: Search, Admin UI, Auth, Theme, Ads, Brand Assets)",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Show “Mogambo” as the app name in the visible UI branding and user-visible metadata.",
+      "acceptanceCriteria": [
+        "The app’s main header/brand area displays “Mogambo”.",
+        "User-facing page titles/labels use “Mogambo” where appropriate."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "create",
+          "description": "Create the main App component (imported by frontend/src/main.tsx) and ensure the primary header/brand text displays “Mogambo”, with route-level page titles/labels using “Mogambo” where appropriate."
+        },
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Ensure the document title is “Mogambo” and remains user-visible metadata aligned with the brand."
+        },
+        {
+          "path": "frontend/src/components/BrandHeader.tsx",
+          "operation": "create",
+          "description": "Create a reusable brand header component that renders the Mogambo logo + “Mogambo” wordmark and exposes a place for navigation/auth controls."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Implement a unified job search UI (keyword + location + optional filters) and a normalized results list backed by aggregated search.",
+      "acceptanceCriteria": [
+        "Users can enter a keyword and location and see a combined results list from all enabled sources.",
+        "Each result shows: job title, company (or “Unknown” if not provided), location (or “Remote/Unknown”), source name, posted date (or “Unknown”), and an “Apply” link that opens the original posting URL.",
+        "Results clearly indicate which source they came from.",
+        "If a source fails to fetch, the UI still renders results from other sources and shows a non-blocking error indicator."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/SearchPage.tsx",
+          "operation": "create",
+          "description": "Create the main search/discovery screen: keyword + location inputs, optional filters area, and a results list that consumes backend search results via useActor and normalizes fields for display (fallbacks for Unknown/Remote/Unknown). Use shadcn-ui form primitives (e.g., Button/Input/Card) for consistent UI. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/JobResultsList.tsx",
+          "operation": "create",
+          "description": "Create a results list component that renders normalized job cards/rows including title, company fallback, location fallback, source label, date fallback, and an Apply link opening the applyUrl in a new tab safely. Use shadcn-ui components for cards/badges/separators where helpful. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useJobSearch.ts",
+          "operation": "create",
+          "description": "Add a React Query-based hook that calls the backend search capability via useActor, supports loading/error states, and preserves prior successful results when a new search fails to enable non-blocking error indication while still showing existing results."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire SearchPage into the app navigation/router as the primary discovery view and ensure users can reach it from the header navigation."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Provide an authenticated, admin-only Admin Panel UI to manage job sources and basic aggregation/ads settings.",
+      "acceptanceCriteria": [
+        "There is a dedicated Admin Panel route/screen accessible from the UI.",
+        "Non-admin users cannot access the Admin Panel (they are blocked and shown an appropriate message).",
+        "Admin users can add, edit, enable/disable, and delete job sources.",
+        "Admin users can change basic settings (at minimum: a toggle to enable/disable rendering ad slots and a text field for AdSense publisher/client id if needed for UI injection)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AdminPage.tsx",
+          "operation": "create",
+          "description": "Create the Admin Panel screen with two sections: (1) Job Sources management (list, add, edit, enable/disable, delete) using backend job source capabilities via useActor; (2) Basic settings UI for ads (toggle + AdSense publisher/client id text field) stored client-side initially (e.g., localStorage) while still being admin-only in the UI. Use shadcn-ui components (Tabs/Dialog/Form/Button/Input/Switch) for the management UI. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/AdminGuard.tsx",
+          "operation": "create",
+          "description": "Create an admin-only guard wrapper that checks caller role/admin status via backend capability (through useActor + React Query) and blocks non-admin users with an appropriate Access Denied message."
+        },
+        {
+          "path": "frontend/src/components/JobSourceEditorDialog.tsx",
+          "operation": "create",
+          "description": "Create an add/edit dialog for job sources (name, URL, fetch type, enabled toggle) used inside AdminPage. Use shadcn-ui Dialog/Input/Select/Switch/Button. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useJobSourcesAdmin.ts",
+          "operation": "create",
+          "description": "Add React Query hooks for admin job source management (list, add, update, toggle enabled, delete) that call the backend capabilities via useActor and invalidate/refetch relevant queries on mutation."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add an Admin Panel route/screen and wire it into navigation (visible only when authenticated; optionally label it as Admin). Wrap the Admin route with AdminGuard so non-admin users are blocked with a message."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Implement Internet Identity authentication UI, profile setup, and admin-aware frontend authorization behavior.",
+      "acceptanceCriteria": [
+        "Users can sign in and sign out via Internet Identity.",
+        "Backend checks caller identity for admin-only methods and rejects non-admin callers.",
+        "There is a backend mechanism to manage the admin allowlist (e.g., initial admin bootstrap and an admin-only method to add/remove other admins)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/LoginButton.tsx",
+          "operation": "create",
+          "description": "Create a login/logout button using the existing useInternetIdentity hook, and clear cached app queries on logout as recommended by the authorization component’s frontend guidance. Use shadcn-ui Button styling as appropriate. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useCurrentUser.ts",
+          "operation": "create",
+          "description": "Create a hook that uses useActor to query current user role/admin status and current user profile (getCallerUserRole / isCallerAdmin / getCallerUserProfile) and exposes consolidated loading/error state for guards and header UI. Use the authorization component’s recommended pattern to avoid profile-setup modal flash. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/ProfileSetupDialog.tsx",
+          "operation": "create",
+          "description": "Create a first-login profile setup dialog prompting for a display name and saving it via saveCallerUserProfile, shown only when authenticated and getCallerUserProfile returns null. Use shadcn-ui Dialog/Input/Button. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/AccessDeniedScreen.tsx",
+          "operation": "create",
+          "description": "Create a simple access denied screen for unauthorized access attempts (e.g., non-admin accessing Admin Panel), aligned with the authorization component’s UI guidance. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/BrandHeader.tsx",
+          "operation": "modify",
+          "description": "Integrate LoginButton and show the signed-in user’s profile name (not the principal id) when available; provide sign-in/out access from the header."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Ensure ProfileSetupDialog is wired at the app shell level so it can appear immediately after login when needed, and ensure auth-dependent screens handle authorization errors gracefully (show message instead of crashing)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Add AdSense-ready ad slot containers (toggleable) with optional safe script/embed behavior and graceful fallback.",
+      "acceptanceCriteria": [
+        "The UI includes at least two distinct ad slot components/containers (e.g., top banner and in-results slot).",
+        "Ad slots render only when enabled in settings; otherwise they do not occupy space or show placeholders.",
+        "If ad loading fails (blocked/no client id), the app remains fully usable with no crashes."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/ads/AdSlot.tsx",
+          "operation": "create",
+          "description": "Create a reusable AdSlot component that conditionally renders nothing when ads are disabled, and when enabled attempts a safe, optional script/embed flow using the configured publisher/client id; failures should be caught and should not crash the app."
+        },
+        {
+          "path": "frontend/src/hooks/useAdSettings.ts",
+          "operation": "create",
+          "description": "Create a small settings hook that reads/writes ad settings (enabled toggle + publisher/client id) from client-side persistence (e.g., localStorage) and exposes them to AdSlot and AdminPage."
+        },
+        {
+          "path": "frontend/src/pages/SearchPage.tsx",
+          "operation": "modify",
+          "description": "Place at least two distinct ad slots in the UI layout (e.g., a top banner area and an in-results placement) using the AdSlot component, ensuring they do not occupy space when disabled."
+        },
+        {
+          "path": "frontend/src/pages/AdminPage.tsx",
+          "operation": "modify",
+          "description": "Add admin-editable ad settings controls (toggle + publisher/client id field) that drive rendering of AdSlot via useAdSettings."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Apply a cohesive Mogambo visual theme (non-blue/purple primary) consistently across search/results and admin screens.",
+      "acceptanceCriteria": [
+        "App uses a consistent theme (color palette, type scale, and component styling) across all pages.",
+        "Primary colors are not blue/purple.",
+        "Search/results and admin screens feel visually part of the same product."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "create",
+          "description": "Create the global stylesheet imported by frontend/src/main.tsx and define Mogambo theme tokens (CSS variables used by Tailwind/shadcn) with a warm, distinctive palette (avoid blue/purple as primary), plus consistent typography and spacing defaults."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Adjust theme extensions only as needed to support Mogambo’s warm palette and typography (keeping shadcn variable-based color system intact) and ensure consistent container/layout behavior across pages."
+        },
+        {
+          "path": "frontend/src/components/AppLayout.tsx",
+          "operation": "create",
+          "description": "Create a shared layout component that applies consistent header, background, spacing, and content container rules across Search and Admin screens, so the product feels unified."
+        },
+        {
+          "path": "frontend/src/pages/SearchPage.tsx",
+          "operation": "modify",
+          "description": "Apply the shared AppLayout and incorporate the warm hero background visual treatment (using the generated hero background image as a non-intrusive decorative element) while keeping the page primarily a search/results experience."
+        },
+        {
+          "path": "frontend/src/pages/AdminPage.tsx",
+          "operation": "modify",
+          "description": "Apply the same AppLayout and styling conventions so Admin Panel UI matches the Mogambo product theme."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Add generated logo + favicon assets and wire them into the header and browser tab.",
+      "acceptanceCriteria": [
+        "A Mogambo logo image is present in the repo under frontend/public/assets/generated and is displayed in the app header.",
+        "A Mogambo favicon is present under frontend/public/assets/generated and is used by the app.",
+        "Assets are served as static files (not via backend)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/assets/generated/mogambo-logo.dim_512x192.png",
+          "operation": "create",
+          "description": "Add the generated Mogambo wordmark logo asset as a static file at the required path."
+        },
+        {
+          "path": "frontend/public/assets/generated/mogambo-favicon.dim_128x128.png",
+          "operation": "create",
+          "description": "Add the generated Mogambo favicon asset as a static file at the required path."
+        },
+        {
+          "path": "frontend/public/assets/generated/mogambo-hero-bg.dim_1600x900.png",
+          "operation": "create",
+          "description": "Add the generated Mogambo hero background illustration as a static file at the required path."
+        },
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Wire the favicon by adding a link tag referencing frontend/public/assets/generated/mogambo-favicon.dim_128x128.png and ensure the document title remains “Mogambo”."
+        },
+        {
+          "path": "frontend/src/components/BrandHeader.tsx",
+          "operation": "modify",
+          "description": "Render the logo image from frontend/public/assets/generated/mogambo-logo.dim_512x192.png in the app header alongside the “Mogambo” brand text."
+        },
+        {
+          "path": "frontend/src/pages/SearchPage.tsx",
+          "operation": "modify",
+          "description": "Use frontend/public/assets/generated/mogambo-hero-bg.dim_1600x900.png as a subtle decorative background/hero treatment within the page layout (static asset; no backend)."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Job-finding app that aggregates listings from multiple online job portals, with an admin panel and AdSense-ready monetization.",
+  "architectural_notes": [],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Minimalist wordmark logo reading “Mogambo” with a bold, modern look (mogambo-logo.dim_512x192.png)\n- Simple icon-style favicon mark for “Mogambo” (mogambo-favicon.dim_128x128.png)\n- Wide, subtle background/hero illustration with abstract shapes and warm tones (mogambo-hero-bg.dim_1600x900.png)",
+  "existing_features": [
+    {
+      "id": "feature-set-the-application-name-to-mogambo-across-the-ui-header-title-text-and-any-app-metadata-that-is-user-visible",
+      "title": "Set the application name to “Mogambo” across the UI (header/title text) and any app metadata that is user-visible.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-job-search-and-discovery-by-aggregating-listings-from-multiple-configurable-job-portal-sources-provide-a-unified-search-ui-keyword-location-optional-filters-and-a-results-list-that-normalizes-common-fields-title-company-location-source-date-apply-url",
+      "title": "Implement job search and discovery by aggregating listings from multiple configurable job portal sources: provide a unified search UI (keyword + location + optional filters) and a results list that normalizes common fields (title, company, location, source, date, apply URL).",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-an-admin-panel-that-is-accessible-only-to-authenticated-admin-users-and-allows-managing-job-sources-create-update-enable-disable-delete-and-basic-app-settings-relevant-to-aggregation-and-ads",
+      "title": "Create an Admin Panel that is accessible only to authenticated admin users and allows managing job sources (create/update/enable/disable/delete) and basic app settings relevant to aggregation and ads.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-authentication-using-internet-identity-and-backend-authorization-for-admin-only-operations-admin-list-stored-in-backend-only-admins-can-mutate-sources-settings",
+      "title": "Implement authentication using Internet Identity and backend authorization for admin-only operations (admin list stored in backend; only admins can mutate sources/settings).",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-frontend-adsense-ready-by-adding-clearly-defined-ad-slots-e-g-header-banner-and-sidebar-in-feed-placements-that-can-be-toggled-on-off-via-admin-settings-and-ensure-the-integration-is-implemented-as-a-safe-optional-script-embed-with-graceful-fallback-when-ads-are-disabled-or-blocked",
+      "title": "Make the frontend AdSense-ready by adding clearly defined ad slots (e.g., header/banner and sidebar/in-feed placements) that can be toggled on/off via admin settings, and ensure the integration is implemented as a safe, optional script/embed with graceful fallback when ads are disabled or blocked.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-coherent-distinctive-visual-theme-for-mogambo-colors-typography-layout-spacing-and-apply-it-consistently-across-landing-search-results-and-the-admin-panel-avoid-blue-purple-as-primary-colors",
+      "title": "Create a coherent, distinctive visual theme for Mogambo (colors, typography, layout, spacing) and apply it consistently across landing/search/results and the Admin Panel (avoid blue/purple as primary colors).",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-static-generated-brand-assets-and-wire-them-into-the-ui-include-a-logo-and-favicon-for-mogambo-and-use-them-in-the-header-and-browser-tab",
+      "title": "Add static generated brand assets and wire them into the UI: include a logo and favicon for Mogambo, and use them in the header and browser tab.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Aggregate job listings from multiple online job portals for job search and discovery",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Add an admin panel to manage the app (e.g., content, sources, users/settings)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Make the app AdSense-ready (ads integration/placement support)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Add backend support for managing job portal sources, including: storing a list of sources (name, base URL, fetch type such as JSON/RSS, enabled flag), fetching jobs from enabled sources via HTTPS outcalls where possible, and exposing query methods for the frontend to search across fetched results.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Mogambo",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
